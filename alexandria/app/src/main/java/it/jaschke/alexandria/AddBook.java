@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
@@ -51,10 +50,28 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        //fix rotation bug
+        ean.setHint(getString(R.string.input_hint));
+        if (getActivity().getSharedPreferences("it.jaschke.alexandria", getActivity().MODE_PRIVATE).getString("SCANNER_EAN", "") != null){
+            String ean = getActivity().getSharedPreferences("it.jaschke.alexandria",getActivity().MODE_PRIVATE).getString("SCANNER_EAN", "");
+            getActivity().getSharedPreferences("it.jaschke.alexandria", getActivity().MODE_PRIVATE).edit().clear().commit();
+            this.ean.setText(ean);
+
+        }
+
+    }
+
+
+
+    @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
+
+
 
         ean.addTextChangedListener(new TextWatcher() {
             @Override
@@ -70,26 +87,16 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void afterTextChanged(Editable s) {
                 String ean =s.toString();
-                //catch isbn10 numbers
-                if(ean.length()==10 && !ean.startsWith("978")){
-                    ean="978"+ean;
-                }
-                if(ean.length()<13){
-                    clearFields();
-                    return;
-                }
-                //Once we have an ISBN, start a book intent
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean);
-                bookIntent.setAction(BookService.FETCH_BOOK);
-                getActivity().startService(bookIntent);
-                AddBook.this.restartLoader();
+                eanHandler(ean);
+
             }
         });
 
         rootView.findViewById(R.id.scan_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Using simplified ZBar library https://github.com/dm77/barcodescanner
+
                 // This is the callback method that the system will invoke when your button is
                 // clicked. You might do this by launching another app or by including the
                 //functionality directly in this app.
@@ -99,9 +106,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 Context context = getActivity();
                 CharSequence text = "This button should let you scan a book for its barcode!";
                 int duration = Toast.LENGTH_SHORT;
+                Intent scanIntent = new Intent(context, ScannerActivity.class);
+                startActivity(scanIntent);
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                //Toast toast = Toast.makeText(context, text, duration);
+                //toast.show();
 
             }
         });
@@ -129,7 +138,25 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             ean.setHint("");
         }
 
+
         return rootView;
+    }
+
+    private void eanHandler(String ean){
+        //catch isbn10 numbers
+        if(ean.length()==10 && !ean.startsWith("978")){
+            ean="978"+ean;
+        }
+        if(ean.length()<13){
+            clearFields();
+            return;
+        }
+        //Once we have an ISBN, start a book intent
+        Intent bookIntent = new Intent(getActivity(), BookService.class);
+        bookIntent.putExtra(BookService.EAN, ean);
+        bookIntent.setAction(BookService.FETCH_BOOK);
+        getActivity().startService(bookIntent);
+        AddBook.this.restartLoader();
     }
 
     private void restartLoader(){

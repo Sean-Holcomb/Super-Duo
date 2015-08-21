@@ -111,6 +111,7 @@ public class BookService extends IntentService {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
+
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
@@ -124,7 +125,7 @@ public class BookService extends IntentService {
                 buffer.append("\n");
             }
 
-            if (buffer.length() == 0) {
+            if (buffer !=null && buffer.length() == 0) {
                 return;
             }
             bookJsonString = buffer.toString();

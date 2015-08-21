@@ -30,6 +30,7 @@
     The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. </string>
     <string name="title_activity_scanner">ScannerActivity</string>
 
+    <string name="no_connection_toast">There is currently no internet connection, please try again later.</string>
 
 
     <string name="hello_world">Hello world!</string>

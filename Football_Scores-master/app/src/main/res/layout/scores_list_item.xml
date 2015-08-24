@@ -19,12 +19,14 @@
             android:orientation="vertical">
 
             <ImageView
+                android:contentDescription="@string/contdes_home_crest"
                 android:id="@+id/home_crest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
 
             <TextView
+                android:contentDescription="@string/contdes_home_name"
                 android:id="@+id/home_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,6 +43,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:contentDescription="@string/contdes_score"
                 android:id="@+id/score_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
@@ -51,6 +54,7 @@
                 android:textSize="@dimen/Score" />
 
             <TextView
+                android:contentDescription="@string/contdes_data"
                 android:id="@+id/data_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
@@ -68,12 +72,14 @@
             android:orientation="vertical">
 
             <ImageView
+                android:contentDescription="@string/contdes_away_crest"
                 android:id="@+id/away_crest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
 
             <TextView
+                android:contentDescription="@string/contdes_away_name"
                 android:id="@+id/away_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

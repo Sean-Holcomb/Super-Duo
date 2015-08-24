@@ -142,8 +142,11 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     private void eanHandler(String ean){
         //catch isbn10 numbers
+
         if(ean.length()==10 && !ean.startsWith("978")){
             ean="978"+ean;
+            //prevent user from entering invalid ISBN and losing their BookDetail
+            this.ean.setText(ean);
         }
         if(ean.length()<13){
             clearFields();

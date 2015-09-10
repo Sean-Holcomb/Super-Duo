@@ -25,6 +25,7 @@ import java.util.Vector;
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
 
+
 /**
  * Created by yehya khaled on 3/2/2015.
  */
@@ -63,7 +64,7 @@ public class myFetchService extends IntentService
             URL fetch = new URL(fetch_build.toString());
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token","e136b7858d424b9da07c88f28b61989a");
+            m_connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));
             m_connection.connect();
 
             // Read the input stream into a String
@@ -86,8 +87,9 @@ public class myFetchService extends IntentService
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
                 return;
+            }else {
+                JSON_data = buffer.toString();
             }
-            JSON_data = buffer.toString();
         }
         catch (Exception e)
         {

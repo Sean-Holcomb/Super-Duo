@@ -7,4 +7,17 @@
     <dimen name="TeamNames">17sp</dimen>
     <dimen name="Score">30sp</dimen>
     <dimen name="League">15sp</dimen>
+
+    <!--Widget Dimensions-->
+    <dimen name="widget_game_default_width">180dp</dimen>
+    <dimen name="widget_game_default_height">40dp</dimen>
+    <dimen name="widget_game_min_resize_width">180dp</dimen>
+    <dimen name="widget_game_min_resize_height">@dimen/widget_game_default_height</dimen>
+    <dimen name="widget_game_large_width">220dp</dimen>
+    <dimen name="widget_margin">8dp</dimen>
+
+    <dimen name="widget_collection_default_width">250dp</dimen>
+    <dimen name="widget_collection_default_height">110dp</dimen>
+    <dimen name="widget_collection_min_resize_width">220dp</dimen>
+    <dimen name="widget_collection_min_resize_height">@dimen/widget_collection_default_height</dimen>
 </resources>

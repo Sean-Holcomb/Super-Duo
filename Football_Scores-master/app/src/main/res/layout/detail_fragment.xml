@@ -10,22 +10,22 @@
         android:layout_marginTop="20dp">
 
         <TextView
-            android:contentDescription="@string/contdes_league"
             android:id="@+id/league_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:contentDescription="@string/contdes_league"
             android:gravity="center"
             android:text="@string/test_text"
             android:textColor="@android:color/black"
             android:textSize="@dimen/League" />
 
         <TextView
-            android:contentDescription="@string/contdes_matchday"
             android:id="@+id/matchday_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:contentDescription="@string/contdes_matchday"
             android:gravity="center"
             android:text="@string/test_text"
             android:textColor="@android:color/black"
@@ -38,18 +38,19 @@
         android:layout_marginTop="20dp">
 
         <Button
-            android:contentDescription="@string/contdes_share_button"
             android:id="@+id/share_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:contentDescription="@string/contdes_share_button"
             android:drawableLeft="@android:drawable/ic_menu_share"
             android:gravity="center"
-            android:paddingStart="120dp"
             android:paddingEnd="120dp"
             android:paddingLeft="120dp"
             android:paddingRight="120dp"
+            android:paddingStart="120dp"
             android:text="@string/share_text" />
+
     </FrameLayout>
 
 </LinearLayout>

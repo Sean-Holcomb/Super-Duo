@@ -75,25 +75,25 @@ public class Utilies
         Resources resources = c.getResources();
         if (teamname==null){
             return R.drawable.no_icon;
-        }else if (teamname==resources.getString(R.string.arsenal)) {
+        }else if (teamname.equals(resources.getString(R.string.arsenal))){
             return R.drawable.arsenal;
-        }else if (teamname==resources.getString(R.string.manchester)) {
+        }else if (teamname.equals(resources.getString(R.string.manchester))){
             return R.drawable.manchester_united;
-        }else if (teamname==resources.getString(R.string.swansea)) {
+        }else if (teamname.equals(resources.getString(R.string.swansea))){
             return R.drawable.swansea_city_afc;
-        }else if (teamname==resources.getString(R.string.leicester)) {
+        }else if (teamname.equals(resources.getString(R.string.leicester))){
             return R.drawable.leicester_city_fc_hd_logo;
-        }else if (teamname==resources.getString(R.string.everton)) {
+        }else if (teamname.equals(resources.getString(R.string.everton))){
             return R.drawable.everton_fc_logo1;
-        }else if (teamname==resources.getString(R.string.west_ham)) {
+        }else if (teamname.equals(resources.getString(R.string.west_ham))){
             return R.drawable.west_ham;
-        }else if (teamname==resources.getString(R.string.tottenham)) {
+        }else if (teamname.equals(resources.getString(R.string.tottenham))){
             return R.drawable.tottenham_hotspur;
-        }else if (teamname==resources.getString(R.string.west_brom)) {
+        }else if (teamname.equals(resources.getString(R.string.west_brom))){
             return R.drawable.west_bromwich_albion_hd_logo;
-        }else if (teamname==resources.getString(R.string.sunderland)) {
+        }else if (teamname.equals(resources.getString(R.string.sunderland))){
             return R.drawable.sunderland;
-        }else if (teamname==resources.getString(R.string.stroke)) {
+        }else if (teamname.equals(resources.getString(R.string.stroke))){
             return R.drawable.stoke_city;
         }else {
             return R.drawable.no_icon;

@@ -1,0 +1,1 @@
+Please put your Api Key from football-data.org in app/src/main/res/values/strings.xml in the string <string name="api_key">Your Api Key Here</string>

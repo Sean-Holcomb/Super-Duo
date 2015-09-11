@@ -77,8 +77,8 @@ public class GameWidgetIntentService extends IntentService {
         int gameId = data.getInt(INDEX_MATCH_ID);
         String homeName = data.getString(INDEX_HOME);
         String awayName = data.getString(INDEX_AWAY);
-        int homeCrest = Utilies.getTeamCrestByTeamName(homeName);
-        int awayCrest = Utilies.getTeamCrestByTeamName(awayName);
+        int homeCrest = Utilies.getTeamCrestByTeamName(homeName, getApplicationContext());
+        int awayCrest = Utilies.getTeamCrestByTeamName(awayName, getApplicationContext());
         String score = Utilies.getScores(data.getInt(INDEX_HOME_GOALS), data.getInt(INDEX_AWAY_GOALS));
         String date = data.getString(INDEX_MATCHTIME);
         data.close();

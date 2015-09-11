@@ -28,10 +28,14 @@ import it.jaschke.alexandria.services.DownloadImage;
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+    private boolean checkValidEan=false;
+    private String lastValidEAN;
+    private String usedEan;
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
+    private final String VALID_EAN ="lastValidEan";
     private static final String SCAN_FORMAT = "scanFormat";
     private static final String SCAN_CONTENTS = "scanContents";
 
@@ -49,19 +53,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if(ean!=null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
         }
+        if (lastValidEAN!=null) {
+            outState.putString(VALID_EAN, lastValidEAN);
+        }
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        //fix rotation bug
+        //fix rotation bug that removed hint if text box was empty
         ean.setHint(getString(R.string.input_hint));
-        if (getActivity().getSharedPreferences("it.jaschke.alexandria", getActivity().MODE_PRIVATE).getString("SCANNER_EAN", "") != null){
-            String ean = getActivity().getSharedPreferences("it.jaschke.alexandria",getActivity().MODE_PRIVATE).getString("SCANNER_EAN", "");
-            getActivity().getSharedPreferences("it.jaschke.alexandria", getActivity().MODE_PRIVATE).edit().clear().commit();
-            this.ean.setText(ean);
 
-        }
 
     }
 
@@ -117,6 +119,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void onClick(View view) {
                 ean.setText("");
+                clearFields();
             }
         });
 
@@ -128,12 +131,21 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 bookIntent.setAction(BookService.DELETE_BOOK);
                 getActivity().startService(bookIntent);
                 ean.setText("");
+                clearFields();
             }
         });
 
         if(savedInstanceState!=null){
+            //makes full book description stay behind when invalid ean is in Edittext box
+            clearFields();
+            checkValidEan=true;
             ean.setText(savedInstanceState.getString(EAN_CONTENT));
             ean.setHint("");
+            lastValidEAN= savedInstanceState.getString(VALID_EAN);
+            if (lastValidEAN!=null){
+                eanHandler(lastValidEAN);
+            }
+
         }
 
 
@@ -146,10 +158,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if(ean.length()==10 && !ean.startsWith("978")){
             ean="978"+ean;
             //prevent user from entering invalid ISBN and losing their BookDetail
-            this.ean.setText(ean);
+            //this.ean.setText(ean);
         }
         if(ean.length()<13){
-            clearFields();
+            //clearFields();
             return;
         }
 
@@ -186,9 +198,17 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             return null;
         }
         String eanStr= ean.getText().toString();
+
+        if (checkValidEan && lastValidEAN != null){
+            eanStr= lastValidEAN;
+        }
+        checkValidEan=false;
+
         if(eanStr.length()==10 && !eanStr.startsWith("978")){
             eanStr="978"+eanStr;
         }
+
+        usedEan= eanStr;
         return new CursorLoader(
                 getActivity(),
                 AlexandriaContract.BookEntry.buildFullBookUri(Long.parseLong(eanStr)),
@@ -204,7 +224,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         if (!data.moveToFirst()) {
             return;
         }
-
+        lastValidEAN=usedEan;
         String bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.bookTitle)).setText(bookTitle);
 
@@ -212,6 +232,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
+        if (authors == null){
+            authors="";
+        }
         String[] authorsArr = authors.split(",");
         ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
         ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));

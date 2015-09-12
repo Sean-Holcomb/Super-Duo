@@ -7,9 +7,10 @@
 
     <ListView
         android:background="@color/green13"
-        android:id="@+id/scores_list"
+        android:id="@+id/widget_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@android:color/transparent"
         android:dividerHeight="15sp" />
+
 </FrameLayout>

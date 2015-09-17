@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by yehya khaled on 2/25/2015.
@@ -101,6 +102,24 @@ public class ScoresProvider extends ContentProvider
         //Log.v(FetchScoreTask.LOG_TAG,SCORES_BY_LEAGUE);
         //Log.v(FetchScoreTask.LOG_TAG,selectionArgs[0]);
         //Log.v(FetchScoreTask.LOG_TAG,String.valueOf(match));
+
+        //checks if query is coming from the collection widget
+        if (selection !=null) {
+            Log.e("EEEEEEEEE", selection);
+            retCursor = mOpenHelper.getReadableDatabase().query(
+                    DatabaseContract.SCORES_TABLE,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    sortOrder
+            );
+
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+            return retCursor;
+        }
+
         switch (match)
         {
             case MATCHES:
@@ -155,6 +174,7 @@ public class ScoresProvider extends ContentProvider
         retCursor.setNotificationUri(getContext().getContentResolver(),uri);
         return retCursor;
     }
+
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {

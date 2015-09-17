@@ -114,11 +114,16 @@ public class myFetchService extends IntentService
         try {
             if (JSON_data != null) {
                 //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
+
                 JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
+                // uncomment to making dummy data always go through
+                //if (true) {
+
                 if (matches.length() == 0) {
+
                     //if there is no data, call the function on dummy data
                     //this is expected behavior during the off season.
-                    processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
+                processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
                     return;
                 }
 
@@ -142,6 +147,7 @@ public class myFetchService extends IntentService
         final String CHAMPIONS_LEAGUE = "362";
         final String PRIMERA_DIVISION = "358";
         final String BUNDESLIGA = "351";
+        final String BUNDESLIGA_THREE = "403";
         final String SEASON_LINK = "http://api.football-data.org/alpha/soccerseasons/";
         final String MATCH_LINK = "http://api.football-data.org/alpha/fixtures/";
         final String FIXTURES = "fixtures";
@@ -184,6 +190,7 @@ public class myFetchService extends IntentService
                         League.equals(SERIE_A)             ||
                         League.equals(CHAMPIONS_LEAGUE)    ||
                         League.equals(BUNDESLIGA)          ||
+                        League.equals(BUNDESLIGA_THREE)    ||
                         League.equals(PRIMERA_DIVISION)     )
                 {
                     match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
@@ -253,7 +260,7 @@ public class myFetchService extends IntentService
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {

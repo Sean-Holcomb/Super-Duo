@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
@@ -25,7 +26,7 @@ import barqsoft.footballscores.Utilies;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
     private static final String SCORES_BY_DATE =
-            DatabaseContract.scores_table.DATE_COL + " LIKE ";
+            DatabaseContract.scores_table.DATE_COL + " = ? ";
     private final int DAYS_AWAY=2;
     private final int TOTAL_DAYS=DAYS_AWAY*2+1;
     private final int MILIS_IN_DAY=86400000;
@@ -84,22 +85,20 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
                 for (int i=-DAYS_AWAY;i<=DAYS_AWAY; i++) {
                     todayDate = new Date(System.currentTimeMillis()+((i)*MILIS_IN_DAY));
                     dateString = dateString + "," + (format.format(todayDate));
-                    questionString= questionString+"?";
+                    questionString= questionString + "OR " + SCORES_BY_DATE;
                 }
+                questionString=questionString.substring(3);
                 dateString = dateString.substring(1);
                 dateStrings=dateString.split(",");
-                String selection= SCORES_BY_DATE+ "?";//questionString;
-
-                //dateString=dateStrings[0].substring(0,-1)+"%";
+                String selection= questionString;
 
 
                 Uri TodayGameUri = DatabaseContract.scores_table.buildScoreWithDate();
-                Log.e("EEEEEEEEE", dateString);
                 data = getContentResolver().query(
                         TodayGameUri,
                         DATABASE_COLUMNS,
                         selection,
-                        new String[] {dateStrings[0]},
+                        dateStrings,
                         DatabaseContract.scores_table.DATE_COL + " ASC");
                 if (data!=null) {
                     String ee = data.getCount()+" ";
@@ -124,14 +123,12 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
             @Override
             public RemoteViews getViewAt(int position) {
                 RemoteViews views = new RemoteViews(getPackageName(),
-                        R.layout.scores_list_item);
+                        R.layout.widget_list_item);
                 if (position == AdapterView.INVALID_POSITION ||
                         data == null || !data.moveToPosition(position)) {
-                    Log.e("EEEEEEEEE", "g");
                     return views;
                 }
 
-                Log.e("EEEEEEEEE", "h");
                 int gameId = data.getInt(INDEX_MATCH_ID);
                 String homeName = data.getString(INDEX_HOME);
                 String awayName = data.getString(INDEX_AWAY);
@@ -139,6 +136,16 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
                 int awayCrest = Utilies.getTeamCrestByTeamName(awayName, getApplicationContext());
                 String score = Utilies.getScores(data.getInt(INDEX_HOME_GOALS), data.getInt(INDEX_AWAY_GOALS));
                 String date = data.getString(INDEX_MATCHTIME);
+                String day = data.getString(INDEX_DATE);
+                day = getDayName(day);
+
+                views.setTextViewText(R.id.day_text, day);
+                views.setTextViewText(R.id.home_name, homeName);
+                views.setTextViewText(R.id.away_name, awayName);
+                views.setTextViewText(R.id.score_textview, score);
+                views.setTextViewText(R.id.data_textview, date);
+                views.setImageViewResource(R.id.home_crest, homeCrest);
+                views.setImageViewResource(R.id.away_crest, awayCrest);
 
                 return views;
             }
@@ -165,5 +172,44 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
                 return true;
             }
         };
+    }
+    //method to get formatted day name for top bar.
+    //@param date string formatted "yyyy-MM-dd"
+    //@return string with weekday format.
+    public String getDayName(String date) {
+        // If the date is today, return the localized version of "Today" instead of the actual
+        // day name.
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date measureDate = new Date(System.currentTimeMillis());
+
+        for (int i=-DAYS_AWAY;i<=DAYS_AWAY; i++) {
+            measureDate = new Date(System.currentTimeMillis() + ((i) * MILIS_IN_DAY));
+            if (format.format(measureDate).equals(date)){
+                break;
+            }
+        }
+        long dateInMillis = measureDate.getTime();
+        Time t = new Time();
+        t.setToNow();
+        int julianDay = Time.getJulianDay(dateInMillis, t.gmtoff);
+        int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
+        if (julianDay == currentJulianDay) {
+            return getApplicationContext().getString(R.string.today);
+        } else if ( julianDay == currentJulianDay +1 ) {
+            return getApplicationContext().getString(R.string.tomorrow);
+        }
+        else if ( julianDay == currentJulianDay -1)
+        {
+            return getApplicationContext().getString(R.string.yesterday);
+        }
+        else
+        {
+            Time time = new Time();
+            time.setToNow();
+            // Otherwise, the format is just the day of the week (e.g "Wednesday".
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+            return dayFormat.format(dateInMillis);
+        }
     }
 }

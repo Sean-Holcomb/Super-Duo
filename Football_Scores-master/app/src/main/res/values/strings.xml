@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--YOUR API KEY HERE-->
-    <string name="api_key"></string>
+    <string name="api_key">8b4f1c7ca9f7408484f7b64ae2bd56b1</string>
 
     <!--Day Strings-->
     <string name="today">Today</string>

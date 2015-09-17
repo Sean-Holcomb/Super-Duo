@@ -24,6 +24,12 @@ import barqsoft.footballscores.Utilies;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
+    private static final String SCORES_BY_DATE =
+            DatabaseContract.scores_table.DATE_COL + " LIKE ";
+    private final int DAYS_AWAY=2;
+    private final int TOTAL_DAYS=DAYS_AWAY*2+1;
+    private final int MILIS_IN_DAY=86400000;
+
     private static final String[] DATABASE_COLUMNS = {
             DatabaseContract.scores_table.LEAGUE_COL,
             DatabaseContract.scores_table.DATE_COL,
@@ -51,7 +57,7 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new RemoteViewsFactory() {
             //number of days past and future to be shown in app
-            private final int DAYS_AWAY=2;
+
             private Cursor data = null;
 
             @Override
@@ -71,23 +77,34 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
                 final long identityToken = Binder.clearCallingIdentity();
                 // Get today's data from the ContentProvider
                 Date todayDate;
+                String questionString="";
                 String dateString = "";
                 String[] dateStrings;
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                for (int i=-2;i<=2; i++) {
-                    todayDate = new Date(System.currentTimeMillis()+((i)*86400000));
+                for (int i=-DAYS_AWAY;i<=DAYS_AWAY; i++) {
+                    todayDate = new Date(System.currentTimeMillis()+((i)*MILIS_IN_DAY));
                     dateString = dateString + "," + (format.format(todayDate));
+                    questionString= questionString+"?";
                 }
-                Log.e("EEEEEEEEEEEEEEEEEEEE", dateString);
                 dateString = dateString.substring(1);
                 dateStrings=dateString.split(",");
-                String logs = dateStrings[4];
-                Log.e("EEEEEEEEEEEEEEEEEEEE", logs);
+                String selection= SCORES_BY_DATE+ "?";//questionString;
+
+                //dateString=dateStrings[0].substring(0,-1)+"%";
 
 
                 Uri TodayGameUri = DatabaseContract.scores_table.buildScoreWithDate();
-                data = getContentResolver().query(TodayGameUri, DATABASE_COLUMNS, null,
-                        dateStrings, DatabaseContract.scores_table.DATE_COL + " ASC");
+                Log.e("EEEEEEEEE", dateString);
+                data = getContentResolver().query(
+                        TodayGameUri,
+                        DATABASE_COLUMNS,
+                        selection,
+                        new String[] {dateStrings[0]},
+                        DatabaseContract.scores_table.DATE_COL + " ASC");
+                if (data!=null) {
+                    String ee = data.getCount()+" ";
+                    Log.e("EEEEEEEEE", ee);
+                }
                 Binder.restoreCallingIdentity(identityToken);
             }
 
@@ -106,13 +123,15 @@ public class CollectionWidgetRemoteViewsService extends RemoteViewsService {
 
             @Override
             public RemoteViews getViewAt(int position) {
-                if (position == AdapterView.INVALID_POSITION ||
-                        data == null || !data.moveToPosition(position)) {
-                    return null;
-                }
                 RemoteViews views = new RemoteViews(getPackageName(),
                         R.layout.scores_list_item);
+                if (position == AdapterView.INVALID_POSITION ||
+                        data == null || !data.moveToPosition(position)) {
+                    Log.e("EEEEEEEEE", "g");
+                    return views;
+                }
 
+                Log.e("EEEEEEEEE", "h");
                 int gameId = data.getInt(INDEX_MATCH_ID);
                 String homeName = data.getString(INDEX_HOME);
                 String awayName = data.getString(INDEX_AWAY);

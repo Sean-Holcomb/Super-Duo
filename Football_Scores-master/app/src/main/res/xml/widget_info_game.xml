@@ -6,6 +6,7 @@
     android:minResizeHeight="@dimen/widget_game_min_resize_height"
     android:minResizeWidth="@dimen/widget_game_min_resize_width"
     android:minWidth="@dimen/widget_game_default_width"
+    android:previewImage="@drawable/Game_Widget"
     android:resizeMode="horizontal"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen"

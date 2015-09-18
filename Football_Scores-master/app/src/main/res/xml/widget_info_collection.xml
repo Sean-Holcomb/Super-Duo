@@ -10,4 +10,5 @@
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen"
+    android:previewImage="@drawable/Collection_Widget"
     tools:ignore="UnusedAttribute" />

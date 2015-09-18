@@ -117,9 +117,9 @@ public class myFetchService extends IntentService
 
                 JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
                 // uncomment to making dummy data always go through
-                //if (true) {
+                if (true) {
 
-                if (matches.length() == 0) {
+                //if (matches.length() == 0) {
 
                     //if there is no data, call the function on dummy data
                     //this is expected behavior during the off season.
